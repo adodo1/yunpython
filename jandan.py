@@ -176,8 +176,6 @@ def readhtml(url):
         text = '<p>' + mach_context.group('text').strip()
         image = mach_context.group('image').strip()
         
-
-        
         #imageName = image[image.rindex('/')+1:]
         #imageName = floor + imageName[imageName.rindex(".")+1:]
         #print '>> ' + imageName[imageName.rindex('.')+1:]
@@ -207,8 +205,18 @@ if __name__=='__main__':
         os.mkdir(savepath)
 
     if len(sys.argv) == 2:
+        print '--------------------'
+        # 下载指定页面
         (page, result) = readjandan(r'http://jandan.net/pic/page-%s' % sys.argv[1])
         buildhtml(result, page)
+    if len(sys.argv) == 3:
+        print '--------------------'
+        # 下载指定范围的页面
+        s = int(sys.argv[1])
+        e = int(sys.argv[2])
+        for index in range(s, e):
+            (page, result) = readjandan(r'http://jandan.net/pic/page-%s' % index)
+            buildhtml(result, page)
     else:
         print '--------------------'
         (page, result) = readjandan(r'http://jandan.net/pic')
@@ -223,6 +231,9 @@ if __name__=='__main__':
         buildhtml(result, page)
         (page, result) = readjandan(r'http://jandan.net/pic/page-{0}'.format(int(page) - 1))
         buildhtml(result, page)
+
+    print 'OK'
+    
     '''
     mailbody = buildmail(result)
     smtp = smtplib.SMTP()
@@ -231,28 +242,26 @@ if __name__=='__main__':
     smtp.sendmail(sender, receiver, mailbody.as_string())
     smtp.quit()
     '''
-    print 'OK'
-    
 
-'''
-msgRoot = MIMEMultipart('related')
-msgRoot['Subject'] = 'test message'
+    '''
+    msgRoot = MIMEMultipart('related')
+    msgRoot['Subject'] = 'test message'
 
-msgText = MIMEText('<b>Some <i>HTML</i> text</b> and an image.<br><img src="cid:image1"><br>good!','html','utf-8')
-msgRoot.attach(msgText)
+    msgText = MIMEText('<b>Some <i>HTML</i> text</b> and an image.<br><img src="cid:image1"><br>good!','html','utf-8')
+    msgRoot.attach(msgText)
 
-fp = open('c:\\temp\\test.gif', 'rb')
-msgImage = MIMEImage(fp.read())
-fp.close()
-print 'START'
-msgImage.add_header('Content-ID', '<image1>')
-msgRoot.attach(msgImage)
-smtp = smtplib.SMTP()
-smtp.connect('smtp.126.com')
-print 'CONNECT OK'
-smtp.login(username, password)
-print 'LOGIN OK'
-smtp.sendmail(sender, receiver, msgRoot.as_string())
-smtp.quit()
-print 'FINISH'
-'''
+    fp = open('c:\\temp\\test.gif', 'rb')
+    msgImage = MIMEImage(fp.read())
+    fp.close()
+    print 'START'
+    msgImage.add_header('Content-ID', '<image1>')
+    msgRoot.attach(msgImage)
+    smtp = smtplib.SMTP()
+    smtp.connect('smtp.126.com')
+    print 'CONNECT OK'
+    smtp.login(username, password)
+    print 'LOGIN OK'
+    smtp.sendmail(sender, receiver, msgRoot.as_string())
+    smtp.quit()
+    print 'FINISH'
+    '''
