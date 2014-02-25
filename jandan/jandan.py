@@ -116,8 +116,6 @@ def readcomment(floor):
     except Exception as ex:
         print ex
         return ""
-    
-    
 
 def buildhtml(infos, page):
     context = '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />' \
@@ -145,46 +143,7 @@ def buildhtml(infos, page):
     file_object = open(str(page) + '.html', 'w')
     file_object.write(context)
     file_object.close( )
-    
-def readhtml(url):
-    html = urllib.urlopen(url).read().decode('utf-8');
-    # 先解析出当前是第几页 <span class="current-comment-page">[页数]</span>
-    match_page = re.search(r'"current-comment-page">\[(?P<page>.*?)\]</span>', html, re.I)
-    page = match_page.group('page')
-    print 'page=' + page
-    result = []
-    # 解析页面中 时间,楼层,LINK,文字描述,图片
-    # <li id="comment-楼层">
-    # @</a>时间</span>
-    # <a href="LINK">#
-    # <p>文字描述<img
-    # <img src="图片" />
-    rc_context = re.compile(r'<li id="comment-(?P<floor>.*?)">[\s\S]*?@</a>(?P<time>.*?)</span>[\s\S]*?<a href="(?P<link>.*?)">#[\s\S]*?<p>(?P<text>[\s\S]*?)<img src="(?P<image>.*?)"[\s\S]*?</li>', re.I)
-    for mach_context in rc_context.finditer(html):
 
-        print 'floor=' + mach_context.group('floor')
-        print 'time=' + mach_context.group('time')
-        print 'link=' + mach_context.group('link')
-        print 'text=<p>' + mach_context.group('text').strip()
-        print 'image=' +  mach_context.group('image').strip()
-        print '------------------------------------'
-
-
-        floor = mach_context.group('floor')
-        time = mach_context.group('time')
-        link = mach_context.group('link')
-        text = '<p>' + mach_context.group('text').strip()
-        image = mach_context.group('image').strip()
-        
-        #imageName = image[image.rindex('/')+1:]
-        #imageName = floor + imageName[imageName.rindex(".")+1:]
-        #print '>> ' + imageName[imageName.rindex('.')+1:]
-        #urllib.urlretrieve(image, os.path.join(savepath, floor))    # 下载图片放在临时目录
-        dict = {'floor':floor, 'time':time, 'link':link, 'text':text}
-        result.append(dict)
-        print floor
-    return result
-        
 def buildmail(infos):
     msgRoot = MIMEMultipart('related')
     msgRoot['Subject'] = Header('煎蛋-无聊图', 'utf-8')
